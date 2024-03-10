@@ -1,6 +1,5 @@
 # HistoryHelper
-Learn historic events easier
-The code edits an excel file that you specify a path to (it has to be in strict structure, like BaseFile). It adds the name of the event, the date of it, people and countries involved in it, what the event actually is, and why it happened. This is all information you need to know to succeed in a history exam.
+This code will help you in creating your personal history revision book with all needed information about historic events.
 
 ## Usage guide:
 1. Download the HistoryHelper folder, and open it in your editor. 
