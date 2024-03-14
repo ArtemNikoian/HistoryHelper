@@ -88,30 +88,42 @@ def find_init_date(full_date):
     return init_date
 
 while True:
-    event_name=input("Write the event name: ")
-    text=get_response(event_name)
-    event_date=find_date()
-    event_people=find_people()
-    event_countries=find_countries()
-    event_what=find_what()
-    event_why=find_why()
+    event_names=input("Write the event names: ").split(", ")
+    for event_name in event_names:
+        event_done=False
+        unsuccessful_trials=0
+        while not event_done or unsuccessful_trials>=20:
+            try:
+                text=get_response(event_name)
+                event_date=find_date()
+                event_people=find_people()
+                event_countries=find_countries()
+                event_what=find_what()
+                event_why=find_why()
 
-    workbook = openpyxl.load_workbook(file_path)
-    sheet = workbook.active
-    date_format = "%d.%m.%Y"
-    date_to_fit=find_init_date(event_date)
-    col = 2
+                workbook = openpyxl.load_workbook(file_path)
+                sheet = workbook.active
+                date_format = "%d.%m.%Y"
+                date_to_fit=find_init_date(event_date)
+                col = 2
 
-    while True:
-        start_year_col = str(sheet.cell(row=2, column=col).value)
-        date1=find_init_date(start_year_col)
-        end_year_col = str(sheet.cell(row=2, column=col+1).value)
-        date2=find_init_date(end_year_col)
+                while True:
+                    start_year_col = str(sheet.cell(row=2, column=col).value)
+                    date1=find_init_date(start_year_col)
+                    end_year_col = str(sheet.cell(row=2, column=col+1).value)
+                    date2=find_init_date(end_year_col)
 
-        if date1 < date_to_fit < date2:
-            sheet.insert_cols(col+1, amount=1)
-            insert_event(col, event_name, event_date, event_people, event_countries, event_what, event_why)
-            break
-        col += 1
-    workbook.save(file_path)
-    workbook.close()
+                    if date1 < date_to_fit < date2 or date1==date_to_fit or date2==date_to_fit:
+                        sheet.insert_cols(col+1, amount=1)
+                        insert_event(col, event_name, event_date, event_people, event_countries, event_what, event_why)
+                        break
+                    col += 1
+                workbook.save(file_path)
+                workbook.close()
+                event_done=True
+                print(f"Event {event_name} done")
+            except:
+                unsuccessful_trials+=1
+                print(f"{unsuccessful_trials}th unsuccessful trial for event {event_name}. Wait for more attempts or try a different event.")
+        if unsuccessful_trials>=20:
+            print(f"Too many unsuccessful trials for event {event_name}. There may be an issue with a date of the event.")
