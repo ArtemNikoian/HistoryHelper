@@ -4,8 +4,8 @@ import openpyxl
 from datetime import datetime
 import os 
 
-file_path="your_file_path"
-api_key="your_api_key"
+file_path="/Users/artemnikoan/PythonProjects/HistoryHelper/History.xlsx"
+api_key="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"
 
 def get_response(prompt):
     client = OpenAI(api_key=api_key)
@@ -88,42 +88,63 @@ def find_init_date(full_date):
     return init_date
 
 while True:
-    event_names=input("Write the event names: ").split(", ")
+    event_names = input("Write the event names: ").split(", ")
     for event_name in event_names:
-        event_done=False
-        unsuccessful_trials=0
-        while not event_done or unsuccessful_trials>=20:
+        event_done = False
+        unsuccessful_trials = 0
+        while not event_done or unsuccessful_trials >= 20:
             try:
-                text=get_response(event_name)
-                event_date=find_date()
-                event_people=find_people()
-                event_countries=find_countries()
-                event_what=find_what()
-                event_why=find_why()
+                text = get_response(event_name)
+                event_date = find_date()
+                event_people = find_people()
+                event_countries = find_countries()
+                event_what = find_what()
+                event_why = find_why()
 
                 workbook = openpyxl.load_workbook(file_path)
                 sheet = workbook.active
                 date_format = "%d.%m.%Y"
-                date_to_fit=find_init_date(event_date)
+                date_to_fit = find_init_date(event_date)
                 col = 2
 
                 while True:
                     start_year_col = str(sheet.cell(row=2, column=col).value)
-                    date1=find_init_date(start_year_col)
-                    end_year_col = str(sheet.cell(row=2, column=col+1).value)
-                    date2=find_init_date(end_year_col)
+                    date1 = find_init_date(start_year_col)
+                    end_year_col = str(sheet.cell(row=2, column=col + 1).value)
+                    date2 = find_init_date(end_year_col)
 
-                    if date1 < date_to_fit < date2 or date1==date_to_fit or date2==date_to_fit:
-                        sheet.insert_cols(col+1, amount=1)
+                    if date1 < date_to_fit < date2 or date1 == date_to_fit:
+                        sheet.insert_cols(col + 1, amount=1)
                         insert_event(col, event_name, event_date, event_people, event_countries, event_what, event_why)
                         break
+                    elif date_to_fit < date1:
+                        sheet.insert_cols(col, amount=1)
+                        insert_event(col - 1, event_name, event_date, event_people, event_countries, event_what, event_why)
+                        break
+                    elif date_to_fit > date2:
+                        # Check if cells after date2 are empty
+                        empty_cells = True
+                        for column in sheet.iter_cols(min_row=2, max_row=2, min_col=col + 2):
+                            for cell in column:
+                                if cell.value is not None:
+                                    empty_cells = False
+                                    break
+                            if not empty_cells:
+                                break
+                        if empty_cells:
+                            sheet.insert_cols(col + 2, amount=1)
+                            insert_event(col+1, event_name, event_date, event_people, event_countries, event_what, event_why)
+                            break
                     col += 1
                 workbook.save(file_path)
                 workbook.close()
-                event_done=True
+                event_done = True
                 print(f"Event {event_name} done")
-            except:
-                unsuccessful_trials+=1
+            except Exception as e:
+                unsuccessful_trials += 1
                 print(f"{unsuccessful_trials}th unsuccessful trial for event {event_name}. Wait for more attempts or try a different event.")
-        if unsuccessful_trials>=20:
+                print(f"Error: {e}")
+        if unsuccessful_trials >= 20:
             print(f"Too many unsuccessful trials for event {event_name}. There may be an issue with a date of the event.")
+
+
