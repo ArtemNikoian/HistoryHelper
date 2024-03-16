@@ -4,8 +4,8 @@ import openpyxl
 from datetime import datetime
 import os 
 
-file_path="/Users/artemnikoan/PythonProjects/HistoryHelper/History.xlsx"
-api_key="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"
+file_path="path_to_your_excel_file"
+api_key="your_openai_api_key"
 
 def get_response(prompt):
     client = OpenAI(api_key=api_key)
@@ -79,6 +79,15 @@ def insert_event(col, event, when, who, where, what, why):
     sheet.cell(row=5, column=col+1).value = what
     sheet.cell(row=6, column=col+1).value = why
 
+def wrap_text():
+    for sheet_name in workbook.sheetnames:
+        sheet = workbook[sheet_name]
+        # Iterate through all rows and columns
+        for row in sheet.iter_rows():
+            for cell in row:
+                # Wrap text in the cell
+                cell.alignment = openpyxl.styles.Alignment(wrapText=True)
+
 def find_init_date(full_date):
     if "-" in full_date:
         init_date, _ = full_date.split(" - ")
@@ -136,6 +145,7 @@ while True:
                             insert_event(col+1, event_name, event_date, event_people, event_countries, event_what, event_why)
                             break
                     col += 1
+                wrap_text()
                 workbook.save(file_path)
                 workbook.close()
                 event_done = True
