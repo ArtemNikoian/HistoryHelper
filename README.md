@@ -4,7 +4,7 @@ This code will help you in creating your personal history revision book with all
 ![Result image](image.png)
 
 ## Setup guide:
-1. Download the project, and navigate to the HistoryHelper folder in your editor. 
+1. Download the project, and navigate to the HistoryHelper folder in your editor (e.g. VS Code). 
 2. Run this line of code in terminal to install all libraries: ```pip install openai openpyxl datetime``` if you are using python2, or ```pip3 install openai openpyxl datetime``` if you are using python3 (You can check the python version by running this line: python -V). 
 3. Open the AI.py file. In the top of the code you can see variables for your openai api key and the path to the excel file. Write your openai api key and the excel file path there. If you don't know how to find a file path, I recommend you to watch these videos: Windows: (https://www.youtube.com/watch?v=QZUpzuQ0X5I), Mac: (https://www.youtube.com/watch?v=gxU1wlBAsig&t=23s)
 4. Save the code and close it.
